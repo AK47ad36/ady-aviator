@@ -6,23 +6,27 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#090b10">
 <title>ADY AVIATOR V2</title>
-<link rel="manifest" href="./manifest.json">
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#090b10;color:white;font-family:Arial;text-align:center}
 header{padding:20px;background:#151820;border-bottom:2px solid #e83245}
 h1{color:#ff4054}
-.card{background:#151922;border:1px solid #303746;border-radius:15px;padding:20px;margin:18px auto;max-width:460px}
+.card{background:#151922;border:1px solid #303746;border-radius:15px;padding:20px;margin:18px auto;max-width:480px}
 input{width:100%;padding:14px;margin:8px 0;background:#090b10;color:white;border:1px solid #555;border-radius:8px}
-button{width:100%;padding:14px;margin:7px 0;background:#e83245;color:white;border:0;border-radius:9px;font-weight:bold}
+button{width:100%;padding:13px;margin:7px 0;background:#e83245;color:white;border:0;border-radius:9px;font-weight:bold}
 .secondary{background:#303746}
 .muted{color:#aaa;font-size:13px}
 .signal{font-size:38px;color:#48e6a1}
-#dashboard{display:none}
+#dashboard,#adminPanel{display:none}
+.userrow{border-top:1px solid #303746;padding:10px 0;text-align:left}
+.smallbtn{width:auto;padding:8px 12px}
 </style>
 </head>
 <body>
-<header><h1>✈ ADY AVIATOR</h1><p>V2 SMART PANEL</p></header>
+<header>
+<h1>✈ ADY AVIATOR</h1>
+<p>V2 SMART PANEL</p>
+</header>
 
 <section id="login" class="card">
 <h3>🔐 USER LOGIN</h3>
@@ -38,6 +42,7 @@ button{width:100%;padding:14px;margin:7px 0;background:#e83245;color:white;borde
 <div class="card">
 <h3>WELCOME TO ADY AVIATOR</h3>
 <p id="userEmail" class="muted"></p>
+<p id="roleLabel" class="muted"></p>
 <button id="logoutBtn" class="secondary">LOGOUT</button>
 </div>
 <div class="card">
@@ -51,72 +56,189 @@ button{width:100%;padding:14px;margin:7px 0;background:#e83245;color:white;borde
 </div>
 </section>
 
+<section id="adminPanel">
+<div class="card">
+<h2>👑 ADMIN DASHBOARD</h2>
+<p class="muted">USER MANAGEMENT</p>
+<button id="refreshUsers" class="secondary">REFRESH USERS</button>
+<div id="usersList"></div>
+</div>
+</section>
+
 <footer class="muted">
 Signals are random simulations. They cannot predict or influence actual Aviator results.
 </footer>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
 import {
- getAuth,createUserWithEmailAndPassword,
- signInWithEmailAndPassword,GoogleAuthProvider,
- signInWithPopup,onAuthStateChanged,signOut
+getAuth,createUserWithEmailAndPassword,
+signInWithEmailAndPassword,GoogleAuthProvider,
+signInWithPopup,onAuthStateChanged,signOut
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
-const firebaseConfig = {
- apiKey: "AIzaSyDa6upWOzw6YbZB_SfpmDfK2kH9InBxAwc",
- authDomain:"ady-aviator-v2.firebaseapp.com",
- projectId:"ady-aviator-v2",
- storageBucket:"ady-aviator-v2.firebasestorage.app",
- messagingSenderId:"350160250162",
- appId:"1:350160250162:web:73d29eef0fa1fcd468a32b"
+import {
+getFirestore,doc,getDoc,setDoc,
+collection,getDocs,updateDoc,
+addDoc,serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyDa6upWOzw6YbZB_SfpmDfK2kH9InBxAwc",
+authDomain:"ady-aviator-v2.firebaseapp.com",
+projectId:"ady-aviator-v2",
+storageBucket:"ady-aviator-v2.firebasestorage.app",
+messagingSenderId:"350160250162",
+appId:"1:350160250162:web:73d29eef0fa1fcd468a32b"
 };
+
+const ADMIN_UID="WqhCeFNsRGWTaS9OBmjaG5byBPa2";
 
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
+const db=getFirestore(app);
 const provider=new GoogleAuthProvider();
 
-const email=document.getElementById("email");
-const password=document.getElementById("password");
-const message=document.getElementById("message");
+const $=id=>document.getElementById(id);
+const email=$("email");
+const password=$("password");
+const message=$("message");
 
-document.getElementById("loginBtn").onclick=async()=>{
- try{
- message.textContent="Logging in...";
- await signInWithEmailAndPassword(auth,email.value.trim(),password.value);
- }catch(e){message.textContent=e.message;}
+$("loginBtn").onclick=async()=>{
+try{
+message.textContent="Logging in...";
+await signInWithEmailAndPassword(auth,email.value.trim(),password.value);
+}catch(e){message.textContent=e.message;}
 };
 
-document.getElementById("registerBtn").onclick=async()=>{
- try{
- message.textContent="Creating account...";
- await createUserWithEmailAndPassword(auth,email.value.trim(),password.value);
- }catch(e){message.textContent=e.message;}
+$("registerBtn").onclick=async()=>{
+try{
+message.textContent="Creating account...";
+await createUserWithEmailAndPassword(auth,email.value.trim(),password.value);
+}catch(e){message.textContent=e.message;}
 };
 
-document.getElementById("googleBtn").onclick=async()=>{
- try{
- message.textContent="Opening Google Login...";
- await signInWithPopup(auth,provider);
- }catch(e){message.textContent=e.message;}
+$("googleBtn").onclick=async()=>{
+try{
+message.textContent="Opening Google Login...";
+await signInWithPopup(auth,provider);
+}catch(e){message.textContent=e.message;}
 };
 
-document.getElementById("logoutBtn").onclick=()=>signOut(auth);
-
-onAuthStateChanged(auth,user=>{
- document.getElementById("login").style.display=user?"none":"block";
- document.getElementById("dashboard").style.display=user?"block":"none";
- document.getElementById("userEmail").textContent=user?(user.email||"Google User"):"";
-});
+$("logoutBtn").onclick=()=>signOut(auth);
 
 let rounds=[];
-document.getElementById("generateBtn").onclick=()=>{
- const value=(1+Math.random()*9).toFixed(2)+"x";
- document.getElementById("signal").textContent=value;
- rounds.unshift(value);
- rounds=rounds.slice(0,10);
- document.getElementById("history").textContent=rounds.join(" | ");
+
+$("generateBtn").onclick=async()=>{
+const user=auth.currentUser;
+if(!user)return;
+
+const value=(1+Math.random()*9).toFixed(2)+"x";
+$("signal").textContent=value;
+rounds.unshift(value);
+rounds=rounds.slice(0,10);
+$("history").textContent=rounds.join(" | ");
+
+try{
+await addDoc(collection(db,"users",user.uid,"signals"),{
+value:value,
+createdAt:serverTimestamp()
+});
+}catch(e){
+message.textContent="Cloud history unavailable: "+e.message;
+}
 };
+
+async function loadUsers(){
+const list=$("usersList");
+list.textContent="Loading users...";
+
+try{
+const snap=await getDocs(collection(db,"users"));
+list.innerHTML="";
+
+snap.forEach(d=>{
+const u=d.data();
+const row=document.createElement("div");
+row.className="userrow";
+
+const title=document.createElement("div");
+title.textContent=(u.email||d.id)+" — "+(u.role||"user")+" — "+(u.blocked?"BLOCKED":"ACTIVE");
+row.appendChild(title);
+
+if(d.id!==ADMIN_UID){
+const btn=document.createElement("button");
+btn.className="smallbtn";
+btn.textContent=u.blocked?"UNBLOCK":"BLOCK";
+
+btn.onclick=async()=>{
+try{
+await updateDoc(doc(db,"users",d.id),{
+blocked:!u.blocked
+});
+await loadUsers();
+}catch(e){alert(e.message);}
+};
+
+row.appendChild(btn);
+}
+
+list.appendChild(row);
+});
+
+if(!snap.size)list.textContent="No user profiles found yet.";
+
+}catch(e){
+list.textContent="Could not load users: "+e.message;
+}
+}
+
+$("refreshUsers").onclick=loadUsers;
+
+onAuthStateChanged(auth,async user=>{
+$("login").style.display=user?"none":"block";
+$("dashboard").style.display="none";
+$("adminPanel").style.display="none";
+
+if(!user)return;
+
+try{
+const ref=doc(db,"users",user.uid);
+let snap=await getDoc(ref);
+
+if(!snap.exists()){
+await setDoc(ref,{
+uid:user.uid,
+email:user.email||"",
+role:user.uid===ADMIN_UID?"admin":"user",
+blocked:false,
+createdAt:serverTimestamp()
+});
+}
+
+snap=await getDoc(ref);
+const profile=snap.data();
+
+if(profile.blocked){
+await signOut(auth);
+message.textContent="Account blocked. Contact administrator.";
+return;
+}
+
+$("dashboard").style.display="block";
+$("userEmail").textContent=user.email||"Google User";
+$("roleLabel").textContent=profile.role==="admin"?"ADMIN ACCOUNT":"USER ACCOUNT";
+
+if(user.uid===ADMIN_UID && profile.role==="admin"){
+$("adminPanel").style.display="block";
+await loadUsers();
+}
+
+}catch(e){
+message.textContent="Database setup needed: "+e.message;
+}
+});
 </script>
 </body>
 </html>
