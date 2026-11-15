@@ -1,33 +1,30 @@
 
 <!DOCTYPE html>
 <html lang="en">
- <head>
-<meta name="theme-color" content="#090b10">
- <link rel="manifest" href="./manifest.json">
-<link rel="icon" href="./file_00000000f74081faaeeec3fa8215d7e8.png" type="image/png">
+<head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#090b10">
+<meta name="description" content="ADY AVIATOR independent random signal generator">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./file_00000000f74081faaeeec3fa8215d7e8.png">
 <title>ADY AVIATOR</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#090b10;color:#fff;font-family:Arial,sans-serif}
-header{padding:20px;text-align:center;background:#151820;border-bottom:2px solid #e83245}
-header h1{margin:0;color:#ff4054;letter-spacing:3px}
-header p{color:#aaa;font-size:12px}
+body{margin:0;background:#090b10;color:white;font-family:Arial,sans-serif}
+header{text-align:center;padding:20px;background:#151820;border-bottom:2px solid #e83245}
+h1{color:#ff4054;letter-spacing:3px}
+header p,.muted{color:#aaa;font-size:13px}
 main{max-width:480px;margin:auto;padding:18px}
 .card{background:#151922;border:1px solid #303746;border-radius:15px;padding:20px;margin:16px 0;text-align:center}
 .status{color:#45dc9b;font-size:13px}
-.circle{width:210px;height:210px;border:7px solid #e83245;border-radius:50%;margin:20px auto;display:flex;align-items:center;justify-content:center;flex-direction:column;box-shadow:0 0 28px #e8324540}
+.circle{width:210px;height:210px;border:7px solid #e83245;border-radius:50%;margin:20px auto;display:flex;align-items:center;justify-content:center;flex-direction:column}
 .circle strong{font-size:48px;color:#ff4054}
-.circle small{color:#aaa}
-button{width:100%;padding:15px;border:0;border-radius:10px;background:#e83245;color:white;font-size:16px;font-weight:bold;margin-top:12px}
-button:active{transform:scale(.98)}
+button{width:100%;padding:15px;border:0;border-radius:10px;background:#e83245;color:white;font-size:16px;font-weight:bold}
 .signal{font-size:34px;color:#48e6a1;font-weight:bold;margin:18px}
-.muted{color:#9da5b5;font-size:13px;line-height:1.6}
 .rounds{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .round{background:#262e3b;padding:10px;border-radius:8px;color:#ffd36b}
-footer{text-align:center;padding:20px;color:#777;font-size:11px}
+footer{text-align:center;padding:20px;color:#aaa;font-size:11px}
 </style>
 </head>
 <body>
@@ -35,7 +32,6 @@ footer{text-align:center;padding:20px;color:#777;font-size:11px}
 <h1>✈ ADY AVIATOR</h1>
 <p>SMART SIGNAL PANEL</p>
 </header>
-
 <main>
 <div class="card">
 <div class="status">● SYSTEM ONLINE</div>
@@ -47,33 +43,26 @@ footer{text-align:center;padding:20px;color:#777;font-size:11px}
 <p class="muted">Next signal timer</p>
 <h2 id="timer">30</h2>
 </div>
-
 <div class="card">
 <h3>🎯 SIGNAL GENERATOR</h3>
 <div class="signal" id="signal">WAITING</div>
 <p class="muted" id="signalInfo">Generate a sample signal below</p>
 <button onclick="generateSignal()">GENERATE SIGNAL</button>
 </div>
-
 <div class="card">
 <h3>📊 LAST 10 ROUNDS</h3>
 <div class="rounds" id="rounds"></div>
 </div>
-
 <div class="card">
 <h3>⚙ PANEL INFORMATION</h3>
 <p class="muted">ADY AVIATOR Independent Signal Generator</p>
 <p class="status">● Website Active</p>
 </div>
 </main>
-
 <footer>
 ADY AVIATOR © 2026<br>
-Signals are randomly generated simulations.
-They do not predict or influence real Aviator results.
-Never risk money based on these signals.
+Signals are random simulations. They cannot predict or influence actual Aviator results. Never risk money based on them.
 </footer>
-
 <script>
 let seconds=30;
 let history=[];
@@ -93,12 +82,11 @@ setInterval(()=>{
  if(seconds<=0)seconds=30;
  document.getElementById("timer").textContent=seconds;
 },1000);
-</script>
-</script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js");
-  });
+if("serviceWorker" in navigator){
+ window.addEventListener("load",()=>{
+  navigator.serviceWorker.register("./sw.js").catch(console.error);
+ });
 }
 </script>
+</body>
 </html>
