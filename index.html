@@ -8,18 +8,82 @@
 <title>ADY AVIATOR V2</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#090b10;color:white;font-family:Arial;text-align:center}
-header{padding:20px;background:#151820;border-bottom:2px solid #e83245}
-h1{color:#ff4054}
-.card{background:#151922;border:1px solid #303746;border-radius:15px;padding:20px;margin:18px auto;max-width:480px}
-input{width:100%;padding:14px;margin:8px 0;background:#090b10;color:white;border:1px solid #555;border-radius:8px}
-button{width:100%;padding:13px;margin:7px 0;background:#e83245;color:white;border:0;border-radius:9px;font-weight:bold}
-.secondary{background:#303746}
-.muted{color:#aaa;font-size:13px}
-.signal{font-size:38px;color:#48e6a1}
+body{
+ margin:0;
+ background:radial-gradient(circle at top,#202432 0%,#090b10 55%);
+ color:#fff;
+ font-family:Arial,sans-serif;
+ text-align:center;
+ min-height:100vh;
+}
+header{
+ padding:30px 16px;
+ background:linear-gradient(145deg,#191d29,#0b0d13);
+ border-bottom:2px solid #e83245;
+ box-shadow:0 8px 30px #0008;
+}
+h1{
+ color:#ff4054;
+ font-size:clamp(28px,7vw,42px);
+ letter-spacing:1px;
+}
+header p{color:#d5d8e2;letter-spacing:2px}
+.card{
+ background:linear-gradient(145deg,#1b202d,#11141d);
+ border:1px solid #343b4c;
+ border-radius:22px;
+ padding:24px 20px;
+ margin:20px auto;
+ max-width:480px;
+ width:calc(100% - 24px);
+ box-shadow:0 12px 35px #0006;
+}
+input{
+ width:100%;
+ padding:15px;
+ margin:9px 0;
+ background:#090c13;
+ color:white;
+ border:1px solid #454d60;
+ border-radius:12px;
+ font-size:16px;
+}
+button{
+ width:100%;
+ padding:15px;
+ margin:8px 0;
+ background:linear-gradient(135deg,#ff4054,#c91e36);
+ color:white;
+ border:0;
+ border-radius:12px;
+ font-size:16px;
+ font-weight:bold;
+ box-shadow:0 5px 18px #e8324533;
+ cursor:pointer;
+}
+button:active{transform:scale(.98)}
+.secondary{background:linear-gradient(135deg,#3b4355,#252b39)}
+.muted{color:#b5bac7;font-size:14px}
+.signal{
+ font-size:clamp(38px,10vw,54px);
+ color:#48e6a1;
+ font-weight:bold;
+ text-shadow:0 0 20px #48e6a144;
+ margin:20px 0;
+}
 #dashboard,#adminPanel{display:none}
-.userrow{border-top:1px solid #303746;padding:10px 0;text-align:left}
-.smallbtn{width:auto;padding:8px 12px}
+.userrow{
+ border-top:1px solid #343b4c;
+ padding:14px 0;
+ text-align:left;
+}
+.smallbtn{width:auto;padding:10px 16px}
+@media(max-width:480px){
+ header{padding:24px 12px}
+ .card{padding:22px 16px;border-radius:18px}
+}
+</style>
+  
 </style>
 </head>
 <body>
