@@ -2,10 +2,18 @@
 {
   "name": "ADY AVIATOR",
   "short_name": "ADY AVIATOR",
-  "description": "Independent random signal simulation panel",
+  "description": "ADY AVIATOR Independent Signal Generator",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#090b10",
-  "theme_color": "#090b10"
+  "theme_color": "#090b10",
+  "icons": [
+    {
+      "src": "./file_00000000f74081faaeeec3fa8215d7e8.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }
