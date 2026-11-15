@@ -3,90 +3,120 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#090b10">
-<meta name="description" content="ADY AVIATOR independent random signal generator">
+<title>ADY AVIATOR V2</title>
 <link rel="manifest" href="./manifest.json">
-<link rel="icon" href="./file_00000000f74081faaeeec3fa8215d7e8.png">
-<title>ADY AVIATOR</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#090b10;color:white;font-family:Arial,sans-serif}
-header{text-align:center;padding:20px;background:#151820;border-bottom:2px solid #e83245}
-h1{color:#ff4054;letter-spacing:3px}
-header p,.muted{color:#aaa;font-size:13px}
-main{max-width:480px;margin:auto;padding:18px}
-.card{background:#151922;border:1px solid #303746;border-radius:15px;padding:20px;margin:16px 0;text-align:center}
-.status{color:#45dc9b;font-size:13px}
-.circle{width:210px;height:210px;border:7px solid #e83245;border-radius:50%;margin:20px auto;display:flex;align-items:center;justify-content:center;flex-direction:column}
-.circle strong{font-size:48px;color:#ff4054}
-button{width:100%;padding:15px;border:0;border-radius:10px;background:#e83245;color:white;font-size:16px;font-weight:bold}
-.signal{font-size:34px;color:#48e6a1;font-weight:bold;margin:18px}
-.rounds{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.round{background:#262e3b;padding:10px;border-radius:8px;color:#ffd36b}
-footer{text-align:center;padding:20px;color:#aaa;font-size:11px}
+body{margin:0;background:#090b10;color:white;font-family:Arial;text-align:center}
+header{padding:20px;background:#151820;border-bottom:2px solid #e83245}
+h1{color:#ff4054}
+.card{background:#151922;border:1px solid #303746;border-radius:15px;padding:20px;margin:18px auto;max-width:460px}
+input{width:100%;padding:14px;margin:8px 0;background:#090b10;color:white;border:1px solid #555;border-radius:8px}
+button{width:100%;padding:14px;margin:7px 0;background:#e83245;color:white;border:0;border-radius:9px;font-weight:bold}
+.secondary{background:#303746}
+.muted{color:#aaa;font-size:13px}
+.signal{font-size:38px;color:#48e6a1}
+#dashboard{display:none}
 </style>
 </head>
 <body>
-<header>
-<h1>✈ ADY AVIATOR</h1>
-<p>SMART SIGNAL PANEL</p>
-</header>
-<main>
+<header><h1>✈ ADY AVIATOR</h1><p>V2 SMART PANEL</p></header>
+
+<section id="login" class="card">
+<h3>🔐 USER LOGIN</h3>
+<input id="email" type="email" placeholder="Email address">
+<input id="password" type="password" placeholder="Password">
+<button id="loginBtn">LOGIN</button>
+<button id="registerBtn" class="secondary">CREATE ACCOUNT</button>
+<button id="googleBtn" class="secondary">CONTINUE WITH GOOGLE</button>
+<p id="message" class="muted"></p>
+</section>
+
+<section id="dashboard">
 <div class="card">
-<div class="status">● SYSTEM ONLINE</div>
-<div class="circle">
-<small>CURRENT MULTIPLIER</small>
-<strong id="multiplier">1.00x</strong>
-<small id="status">READY</small>
-</div>
-<p class="muted">Next signal timer</p>
-<h2 id="timer">30</h2>
+<h3>WELCOME TO ADY AVIATOR</h3>
+<p id="userEmail" class="muted"></p>
+<button id="logoutBtn" class="secondary">LOGOUT</button>
 </div>
 <div class="card">
-<h3>🎯 SIGNAL GENERATOR</h3>
-<div class="signal" id="signal">WAITING</div>
-<p class="muted" id="signalInfo">Generate a sample signal below</p>
-<button onclick="generateSignal()">GENERATE SIGNAL</button>
+<h3>🎯 RANDOM SIGNAL GENERATOR</h3>
+<div id="signal" class="signal">WAITING</div>
+<button id="generateBtn">GENERATE SIGNAL</button>
 </div>
 <div class="card">
 <h3>📊 LAST 10 ROUNDS</h3>
-<div class="rounds" id="rounds"></div>
+<div id="history"></div>
 </div>
-<div class="card">
-<h3>⚙ PANEL INFORMATION</h3>
-<p class="muted">ADY AVIATOR Independent Signal Generator</p>
-<p class="status">● Website Active</p>
-</div>
-</main>
-<footer>
-ADY AVIATOR © 2026<br>
-Signals are random simulations. They cannot predict or influence actual Aviator results. Never risk money based on them.
+</section>
+
+<footer class="muted">
+Signals are random simulations. They cannot predict or influence actual Aviator results.
 </footer>
-<script>
-let seconds=30;
-let history=[];
-function generateSignal(){
- const value=(1+Math.random()*9).toFixed(2);
- document.getElementById("signal").textContent=value+"x";
- document.getElementById("signalInfo").textContent="Random sample signal generated";
- document.getElementById("multiplier").textContent=value+"x";
- document.getElementById("status").textContent="SAMPLE";
- history.unshift(value+"x");
- history=history.slice(0,10);
- document.getElementById("rounds").innerHTML=
- history.map(x=>'<span class="round">'+x+'</span>').join("");
-}
-setInterval(()=>{
- seconds--;
- if(seconds<=0)seconds=30;
- document.getElementById("timer").textContent=seconds;
-},1000);
-if("serviceWorker" in navigator){
- window.addEventListener("load",()=>{
-  navigator.serviceWorker.register("./sw.js").catch(console.error);
- });
-}
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {
+ getAuth,createUserWithEmailAndPassword,
+ signInWithEmailAndPassword,GoogleAuthProvider,
+ signInWithPopup,onAuthStateChanged,signOut
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+const firebaseConfig = {
+ apiKey:"AIzaSyDa6upWOzw6YbZB_SfmDfK2K2",
+ authDomain:"ady-aviator-v2.firebaseapp.com",
+ projectId:"ady-aviator-v2",
+ storageBucket:"ady-aviator-v2.firebasestorage.app",
+ messagingSenderId:"350160250162",
+ appId:"1:350160250162:web:73d29eef0fa1fcd468a32b"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const provider=new GoogleAuthProvider();
+
+const email=document.getElementById("email");
+const password=document.getElementById("password");
+const message=document.getElementById("message");
+
+document.getElementById("loginBtn").onclick=async()=>{
+ try{
+ message.textContent="Logging in...";
+ await signInWithEmailAndPassword(auth,email.value.trim(),password.value);
+ }catch(e){message.textContent=e.message;}
+};
+
+document.getElementById("registerBtn").onclick=async()=>{
+ try{
+ message.textContent="Creating account...";
+ await createUserWithEmailAndPassword(auth,email.value.trim(),password.value);
+ }catch(e){message.textContent=e.message;}
+};
+
+document.getElementById("googleBtn").onclick=async()=>{
+ try{
+ message.textContent="Opening Google Login...";
+ await signInWithPopup(auth,provider);
+ }catch(e){message.textContent=e.message;}
+};
+
+document.getElementById("logoutBtn").onclick=()=>signOut(auth);
+
+onAuthStateChanged(auth,user=>{
+ document.getElementById("login").style.display=user?"none":"block";
+ document.getElementById("dashboard").style.display=user?"block":"none";
+ document.getElementById("userEmail").textContent=user?(user.email||"Google User"):"";
+});
+
+let rounds=[];
+document.getElementById("generateBtn").onclick=()=>{
+ const value=(1+Math.random()*9).toFixed(2)+"x";
+ document.getElementById("signal").textContent=value;
+ rounds.unshift(value);
+ rounds=rounds.slice(0,10);
+ document.getElementById("history").textContent=rounds.join(" | ");
+};
 </script>
 </body>
 </html>
