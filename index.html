@@ -1,6 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+ <head>
 <meta name="theme-color" content="#090b10">
  <link rel="manifest" href="./manifest.json">
 <link rel="icon" href="./file_00000000f74081faaeeec3fa8215d7e8.png" type="image/png">
@@ -93,7 +94,7 @@ setInterval(()=>{
  document.getElementById("timer").textContent=seconds;
 },1000);
 </script>
-</<script>
+</script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./sw.js");
