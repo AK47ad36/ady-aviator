@@ -1,0 +1,11 @@
+
+{
+  "name": "ADY AVIATOR",
+  "short_name": "ADY AVIATOR",
+  "description": "Independent random signal simulation panel",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#090b10",
+  "theme_color": "#090b10"
+}
